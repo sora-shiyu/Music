@@ -1,0 +1,12 @@
+@import './slider.less';
+
+body{
+  margin: 0;
+  
+}
+#app>*{
+  min-width: 1024px;
+}
+.gray{
+  color: #999989;
+}
