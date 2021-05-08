@@ -93,7 +93,7 @@ export default {
       divWidth: computed(() => {
         return function (DivNumber) {
           //margin 30px 间隙20*5 右侧滑块4px
-          return ((contentWidth.value - 4 - 25 - 5) / DivNumber) - 20
+          return ((contentWidth.value - 201 - 4 - 25 - 5) / DivNumber) - 20
         }
       }),
     }

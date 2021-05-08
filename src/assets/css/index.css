@@ -2,7 +2,7 @@
 
 body{
   margin: 0;
-  
+  cursor: default;
 }
 #app>*{
   min-width: 1024px;

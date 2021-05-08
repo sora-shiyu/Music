@@ -27,12 +27,12 @@
         </div>
         <div class="count">
           <span class="lightWhite">歌曲：</span>
-          <span class="lightGray">{{PlaylistData.trackIds.length}}</span>
+          <span style="margin-right:10px" class="lightGray">{{PlaylistData.trackIds.length}}</span>
           <span class="lightWhite">播放：</span>
           <span class="lightGray">{{PlaylistData.playCount}}</span>
         </div>
         <div class="description">
-          <span>描述</span>
+          <span>描述：</span>
           <span>{{PlaylistData.description}}</span>
         </div>
       </div>
@@ -42,7 +42,7 @@
       <span class="title">音乐标题</span>
       <span class="singer">歌手</span>
       <span class="album">专辑</span>
-      <span style="color: #999989;overflow: hidden;display: inline-block;">时长</span>
+      <span style="color: #999989;overflow: hidden;display: inline-block;margin-left:10px">时长</span>
     </div>
 
     <div class="resultList">
@@ -58,9 +58,7 @@
         <span class="title">{{Data.name}}</span>
         <span class="singer">{{Data.ar[0].name}}</span>
         <span class="album">{{Data.al.name}}</span>
-        <!-- <div class="duration">
-          <div :style="{width:Getheat(Data.duration)+'%'}"></div>
-        </div>-->
+        <div>{{getDuration(Data.dt)}}</div>
       </div>
     </div>
   </div>
@@ -114,6 +112,7 @@ export default {
       artistsId = artistsId.substring(0, artistsId.length - 1)
       artistsName = artistsName.substring(0, artistsName.length - 1)
       //
+
       let songData = {
         id: Data.id,
         name: Data.name,
@@ -125,7 +124,8 @@ export default {
           id: artistsId,
           name: artistsName,
         },
-        mvid: Data.mv
+        mvid: Data.mv,
+        dt: Data.dt
 
       }
       return songData
@@ -133,9 +133,10 @@ export default {
     const methods = {
       formatIndex: index => index < 10 ? '0' + index : index,
       GetId: Data => {
+        console.log("111", SetSongData(Data));
         store.commit('setCurrentPlay', SetSongData(Data));
       },
-      Getheat: (heat) => Math.floor(heat * 100 / 330000),
+      Getheat: heat => Math.floor(heat * 100 / 330000),
       PlayAll () {
         if (PlaylistDetailData.value.length != 0) {
           let SongDatas = [];
@@ -146,6 +147,14 @@ export default {
           store.commit('setCurrentPlay', SongDatas[0]);
         }
 
+      },
+      getDuration: dt => {
+        let time = Math.floor(dt / 1000)
+        let minute = Math.floor(time / 60)
+        if (minute < 10) minute = '0' + minute
+        let second = time % 60
+        if (second < 10) second = '0' + second
+        return `${minute}:${second}`;
       }
 
     }
@@ -164,7 +173,7 @@ export default {
   margin: 30px 25px 0 25px;
   .TopInfo {
     // height: 185px;
-    height: auto;
+    // height: auto;
 
     > img {
       height: 185px;
@@ -174,7 +183,7 @@ export default {
       float: left;
     }
     > div {
-      height: 185px;
+      // height: 185px;
       margin-left: 210px;
 
       > div:first-child {
@@ -236,7 +245,7 @@ export default {
           color: #fff9;
           border-radius: 30px;
           padding: 6px 15px;
-          margin-right: 10px;
+          margin-right: 5px;
           border: 1px solid #fff6;
         }
       }
@@ -277,7 +286,7 @@ export default {
   margin-bottom: 10px;
   margin-top: 20px;
   > span:first-child {
-    margin-left: 125px;
+    margin-left: 133px;
   }
 }
 .title {
@@ -320,6 +329,13 @@ export default {
       overflow: hidden;
       vertical-align: -webkit-baseline-middle;
       font-size: 14px;
+    }
+    > span:first-child {
+      width: 25px;
+    }
+    > div {
+      margin-left: 10px;
+      color: #999989;
     }
   }
   .isEven {

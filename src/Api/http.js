@@ -3,14 +3,13 @@ import axios from 'axios'
 
 const instance = axios.create({
   baseURL: 'https://netease-cloud-music-api-delta-rouge.vercel.app',
-  //baseURL: 'http://musicapi.leanapp.cn',
   timeout: 10000
 })
 //请求拦截
 instance.interceptors.request.use(config => {
-  // config.headers = {
+  //请求带上国内ip
+  if (config.url.indexOf('/song/url?id=') != -1) config.url += '&realIP=116.25.146.177'
 
-  // }
   return config
 }, err => {
   return Promise.reject(err)

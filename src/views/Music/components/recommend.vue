@@ -69,24 +69,25 @@
         v-for="(Data,index) in GetTopSongData"
         :key="index"
       >
-        <img class="newSongListPic" :src="Data.album.blurPicUrl" />
+        <img class="newSongListPic" :src="Data.PicUrl" />
+        <!-- <img
+          class="newSongListPic"
+          src="http://p4.music.126.net/rKjgA6ietsSS-hIpl_RdUA==/109951165933857216.jpg"
+        />-->
         <div class="newSongInfo">
           <div>
             {{Data.name}}
-            <span v-if="Data.alias[0]">({{Data.alias[0]}})</span>
+            <span v-if="Data.alias">({{Data.alias}})</span>
           </div>
           <div>
-            <span v-if="Data.fee==8">S Q</span>
-            <span v-if="Data.mvid!=0">MV▸</span>
-            {{Data.artists[0].name}}
+            <span v-if="Data.sq">S Q</span>
+            <span v-if="Data.mv">MV▸</span>
+            {{Data.ar_name}}
           </div>
         </div>
-
-        <!-- <div class="playCount">▷ {{playCountToW(Data.playCount)}}</div> -->
         <div>
           <span>▶</span>
         </div>
-        <!-- <span>{{Data.name}}</span> -->
       </div>
     </div>
   </div>
@@ -103,11 +104,7 @@
       >
         <div>
           <img class="ListPic" :src="Data.picUrl" />
-          <!-- <div class="playCount">▷ {{playCountToW(Data.playCount)}}</div> -->
           <div class="playCount">▷ {{playCountToW(Data.playCount)}}</div>
-          <!-- <div class="playButton">
-            <span>▶</span>
-          </div>-->
           <div></div>
         </div>
         <span>{{Data.name}}</span>
@@ -159,11 +156,11 @@ export default {
     })
 
     //初始化容器宽度
-    let contentWidth = ref(document.getElementById("content").clientWidth)
+    let contentWidth = ref(document.getElementById("content").clientWidth - 201)
     //监听浏览器窗口变化
     window.onresize = () => {
       //取content宽度
-      contentWidth.value = document.getElementById("content").clientWidth
+      contentWidth.value = document.getElementById("content").clientWidth - 201
     }
     onBeforeUnmount(() => {
       window.onresize = () => { }
@@ -177,9 +174,22 @@ export default {
       }),
       GetTopSongData: computed(() => {
         // console.log(TopSongData);
-        return TopSongData.value.slice(0, 12)
+        let data = []
+        TopSongData.value.slice(0, 12).forEach(e => {
+          let songData = {};
+          songData.name = e.name;
+          songData.PicUrl = e.album.picUrl + '?param=100y100';
+          songData.sq = e.fee == 8;
+          songData.mv = e.mvid != 0
+          songData.mvid = e.mvid
+          songData.ar_name = e.artists[0].name
+          songData.alias = e.alias[0]
+          data.push(songData)
+        })
+        return data
       })
     }
+
     const Router = useRouter()
     const methods = {
       playCountToW: (playCount) => {
@@ -210,6 +220,7 @@ export default {
     }
   }
 };
+
 </script>
 
 <style lang="less" scoped>
@@ -344,9 +355,9 @@ export default {
     margin: 0 5px 0 25px;
     width: 100%;
     margin-top: 10px;
-    // overflow: auto;
+    overflow: auto;
     .newSongListPic {
-      height: 100%;
+      height: 50px;
       border-radius: 5px;
       float: left;
       width: 50px;
@@ -413,21 +424,25 @@ export default {
   // }
 }
 </style>
-<style lang="less">
-.el-carousel__mask {
-  background-color: #fff0 !important;
-}
-.el-carousel__indicator {
-  .el-carousel__button {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+<style lang="less" >
+.turn {
+  .el-carousel__mask {
+    background-color: #fff0 !important;
+  }
+  .el-carousel__indicator {
+    .el-carousel__button {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  }
+  .el-carousel__indicators--outside button {
+    background-color: rgb(89 91 95) !important;
+  }
+  .el-carousel__indicator.is-active button {
+    background-color: rgb(236, 65, 65) !important;
   }
 }
-.el-carousel__indicators--outside button {
-  background-color: rgb(89 91 95) !important;
-}
-.el-carousel__indicator.is-active button {
-  background-color: rgb(236, 65, 65) !important;
-}
 </style>
+
+

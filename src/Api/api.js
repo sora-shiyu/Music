@@ -3,7 +3,7 @@ import request from './http'
 //轮播图数据
 export const GetBannersApi = () => request.get('/banner')
 //推荐歌单
-export const GetPersonalizedApi = (limit) => request.get('/personalized?limit=' + limit)
+export const GetPersonalizedApi = limit => request.get('/personalized?limit=' + limit)
 //独家放送 
 export const GetPrivateContentApi = () => request.get('/personalized/privatecontent')
 /**
@@ -12,7 +12,7 @@ export const GetPrivateContentApi = () => request.get('/personalized/privatecont
  * @param {number} number 
  * @returns 新歌速递
  */
-export const GetTopSongApi = (type) => request.get('/top/song?type=' + type)
+export const GetTopSongApi = type => request.get('/top/song?type=' + type)
 //推荐mv 
 export const GetPersonalizedMvApi = () => request.get('/personalized/mv')
 /**
@@ -27,12 +27,8 @@ export const GetPersonalizedMvApi = () => request.get('/personalized/mv')
 export const GetCloudSearchApi = (value, type = 1, limit = 30) => {
   return request.get('/search?keywords=' + value + '&type=' + type + '&limit=' + limit)
 }
-//音乐是否可用
-export const GetCheckMusicApi = (id) => {
-  request.get('/check/music?id=' + id).then(res => {
-    return res.success
-  })
-}
+//音乐是否可用 
+export const GetCheckMusicApi = id => request.get('/check/music?id=' + id)
 //获取音乐 url
 export const GetSongUrlApi = (...url) => request.get('/song/url?id=' + url)
 
@@ -54,11 +50,27 @@ export const GetPlaylistApi = (cat = '全部', order = 'hot', limit = 50) => {
   return request.get(`/top/playlist?limit=${limit}&cat=${cat}&order=${order}`)
 }
 //获取歌单详情 
-export const GetPlaylistDetailApi = (id) => request.get('/playlist/detail?id=' + id)
+export const GetPlaylistDetailApi = id => request.get('/playlist/detail?id=' + id)
 //获取歌曲详情 /song/detail?ids=
-export const GetSongDetailApi = (...url) => {
-  console.log(url);
-  return request.get('/song/detail?ids=' + url)
+export const GetSongDetailApi = (...url) => request.get('/song/detail?ids=' + url)
+
+//获取搜索建议 
+export const GetSearchSuggestApi = keyword => request.get('/search/suggest?keywords=' + keyword)
+//热搜列表(详细) 
+export const GetSearchHotApi = () => request.get('/search/hot/detail')
+//获取专辑内容
+export const GetAlbumApi = id => request.get('/album?id=' + id)
+//获取歌词 /lyric?id=33894312
+export const GetLyricApi = id => request.get('/lyric?id=' + id)
+//获取单曲评论 /comment/music
+export const GetCommentMusicApi = (id, offset = 1, limit = 20, before = undefined) => {
+  let offset_ = ''
+  if (offset != 1) offset_ = '&offset=' + offset;
+  let before_ = ''
+  if (before) before_ = '&before=' + before;
+  return request.get(`/comment/music?id=${id}&limit=${limit}${offset_}${before_}`)
+
+
 }
 
 

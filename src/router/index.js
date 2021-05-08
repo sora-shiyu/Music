@@ -94,7 +94,12 @@ const routes = [
     path: '/musicList',
     name: 'MusicList',
     component: MusicList,
-  }
+  },
+  // {
+  //   path: '/song',
+  //   name: 'song',
+  //   component: () => import('@/views/Song/Song')
+  // }
 
   // {
   //   path: '/about',

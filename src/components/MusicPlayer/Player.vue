@@ -34,10 +34,12 @@ import {
   nextTick
 } from 'vue'
 import { useStore } from 'vuex';
-
+import {
+  GetSongUrlApi,
+} from '@/Api/api'
 export default {
   props: {
-    SongId: Number
+    SongInfo: Object
   },
   name: 'MusicPlayer',
   setup (props) {
@@ -57,6 +59,7 @@ export default {
         return methods.numberToTime(sliderValue.value)
       })
     }
+    //定义滑块按下状态
     let press = false;
     nextTick(() => {
       console.log("底部音乐组件创建完成");
@@ -64,22 +67,45 @@ export default {
         sliderValue.length = Math.floor(audio.value.duration)
       }
       audio.value.ontimeupdate = () => {
-        if (!press) sliderValue.value = Math.floor(audio.value.currentTime);
+
+        if (!press) {
+          Store.commit('setCurrentTime', audio.value.currentTime)
+          sliderValue.value = Math.floor(audio.value.currentTime);
+        }
       }
       audio.value.onended = () => {
         methods.nextSong()
       }
       audio.value.volume = Store.state.AudioVolume / 100
     })
-    watch(() => props.SongId, () => {
-      let url = `https://music.163.com/song/media/outer/url?id=${props.SongId}.mp3`
-      audio.value.src = url
-      flag.value = true
+    watch(() => props.SongInfo, () => {
+      let url = ''
+      if (props.SongInfo.vip) {
+        GetSongUrlApi(props.SongInfo.id).then(res => {
+          if (res.data[0].freeTrialInfo == null) {
+            alert("privileges[0].cp==0 错误")
+            url = `https://music.163.com/song/media/outer/url?id=${props.SongInfo.id}.mp3`
+          } else {
+            url = res.data[0].url
+          }
+          audio.value.src = url
+          flag.value = true
+        })
+      } else {
+        url = `https://music.163.com/song/media/outer/url?id=${props.SongInfo.id}.mp3`
+        audio.value.src = url
+        flag.value = true
+      }
+
+
     })
     watch(() => Store.state.AudioVolume, () => {
       // console.log(Store.state.AudioVolume);
       audio.value.volume = Store.state.AudioVolume / 100
 
+    })
+    watch(() => flag.value, (val) => {
+      Store.commit('setPlayState', val);
     })
 
 
@@ -111,9 +137,11 @@ export default {
         press = false
       },
       nextSong () {
+        audio.value.src = ''
         Store.dispatch('nextSong');
       },
       lastSong () {
+        audio.value.src = ''
         Store.dispatch('lastSong');
       }
 

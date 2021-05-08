@@ -15,19 +15,29 @@ export default createStore({
         name: ''
       },
       mvid: 0,
+      dt: 0
 
     },
     currentPlayList: [],
+    playState: false,
     index: -1,
-    AudioVolume: 20,
-    isShowPlayList: false
+    currentTime: 0,
+    AudioVolume: 100,
+    isShowPlayList: false,
+    isShowSongDetailed: false
   },
   mutations: {
     setSearchText: (state, newValue) => {
       state.searchText = newValue
     },
+    setCurrentTime: (state, newValue) => {
+      state.currentTime = newValue
+    },
     setCurrentPlay: (state, newValue) => {
       state.currentPlay = newValue
+    },
+    setPlayState: (state, newValue) => {
+      state.playState = newValue
     },
     setCurrentPlayList: (state, newValue) => {
       state.currentPlayList = newValue
@@ -46,6 +56,9 @@ export default createStore({
     },
     setShowPlayList: (state, val) => {
       state.isShowPlayList = val
+    },
+    setShowSongDetailed: (state, val) => {
+      state.isShowSongDetailed = val
     },
   },
   actions: {
@@ -72,15 +85,17 @@ export default createStore({
       //subPlayList
       if (state.currentPlayList.length > index) {
         commit('subPlayList', index)
-        commit('setIndex', state.index - 1)
-        if (state.index + 1 == index) { dispatch('nextSong') }
-
+        if (index < state.index) {
+          commit('setIndex', state.index - 1)
+        } else if (index == state.index) {
+          commit('setIndex', state.index - 1)
+          dispatch('nextSong')
+        }
 
       }
     },
     nextSong ({ commit, state }) {
       if (state.currentPlayList.length != 0) {
-        console.log(state.index, state.currentPlayList.length);
         if (state.index < state.currentPlayList.length - 1) {
           commit('setCurrentPlay', state.currentPlayList[state.index + 1])
           commit('setIndex', state.index + 1)
@@ -92,7 +107,6 @@ export default createStore({
     },
     lastSong ({ commit, state }) {
       if (state.currentPlayList.length != 0) {
-        console.log(state.index, state.currentPlayList.length);
         if (state.index > 0) {
           commit('setCurrentPlay', state.currentPlayList[state.index - 1])
           commit('setIndex', state.index - 1)

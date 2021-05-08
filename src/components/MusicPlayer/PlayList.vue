@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showPlayList" class="PlayList">
+  <div v-if="showPlayList" class="PlayList">
     <div>播放列表</div>
     <div>
       <span>总{{PlayList.length}}首</span>
@@ -14,7 +14,8 @@
       >
         <div :title="data.name">{{data.name}}</div>
         <div :title="data.artists.name">{{data.artists.name}}</div>
-        <div :title="data.album.name">{{data.album.name}}</div>
+        <img :title="data.album.name" src="@/assets/img/Player/source.svg" />
+        <div>{{getDuration(data.dt)}}</div>
         <span @click="SongRemove(index)">×</span>
       </div>
     </div>
@@ -22,19 +23,25 @@
 </template>
 
 <script>
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 export default {
   name: 'PlayList',
   setup () {
+    //点击div外部关闭 未实现
+
     let showPlayList = ref(true)
     const store = useStore();
-
+    const route = useRoute();
     let PlayList = ref([])
     watchEffect(() => {
       PlayList.value = store.state.currentPlayList
       showPlayList.value = store.state.isShowPlayList
-
+    })
+    //监听路由变化关闭播放列表
+    watch(() => route.path, () => {
+      store.commit('setShowPlayList', false)
     })
     const isPlay = computed(() => {
       return index => {
@@ -56,6 +63,14 @@ export default {
       setPlayListEmpty: function () {
         store.commit('setCurrentPlayList', [])
         store.commit('setIndex', -1)
+      },
+      getDuration: dt => {
+        let time = Math.floor(dt / 1000)
+        let minute = Math.floor(time / 60)
+        if (minute < 10) minute = '0' + minute
+        let second = time % 60
+        if (second < 10) second = '0' + second
+        return `${minute}:${second}`;
       }
     }
 
@@ -79,6 +94,7 @@ export default {
   background-color: rgb(54, 54, 54);
   position: absolute;
   right: 0;
+  top: 0;
   > div:first-child {
     color: #fff;
     background-color: #666666;
@@ -107,13 +123,13 @@ export default {
     }
   }
 }
-
 .SongList {
   overflow-y: auto;
-  overflow-x: hidden;
   height: 83%;
-  clear: both;
   > div {
+    display: flex;
+    align-items: center;
+    position: relative;
     margin: 0 20px;
     &:hover {
       background-color: rgb(61, 61, 61);
@@ -123,14 +139,15 @@ export default {
       }
     }
     > :first-child {
-      width: 50%;
-      color: rgb(214, 214, 214);
+      flex: 2;
     }
     > :nth-child(2) {
-      width: 25%;
+      flex: 1;
     }
-    > :nth-child(3) {
-      width: 25%;
+    > img {
+      width: 16px;
+      height: 16px;
+      margin-right: 10px;
     }
     > div {
       display: inline-block;
@@ -153,9 +170,12 @@ export default {
       margin-top: 2.5px;
       line-height: 20px;
       text-align: center;
+      right: -20px;
+      top: 0;
     }
   }
 }
+
 .lightGray {
   background-color: rgb(57, 57, 57);
 }
@@ -165,3 +185,5 @@ export default {
   }
 }
 </style>
+
+

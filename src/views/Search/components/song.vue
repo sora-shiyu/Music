@@ -53,9 +53,13 @@ export default {
       context.emit("getMessage", res.result.songCount);
     })
     watch(() => store.state.searchText, (val, old) => {
+
       GetCloudSearchApi(val, 1, 99).then(res => {
-        SearchData.value = res.result
-        context.emit("getMessage", res.result.songCount);
+        if (res.code == 200) {
+          SearchData.value = res.result
+          context.emit("getMessage", res.result.songCount);
+        }
+
       })
     })
     // if (!searchText) searchText = '你是我的眼'
@@ -72,6 +76,7 @@ export default {
           artistsId += res.id + '/'
           artistsName += res.name + '/'
         })
+
         artistsId = artistsId.substring(0, artistsId.length - 1)
         artistsName = artistsName.substring(0, artistsName.length - 1)
         //
@@ -86,10 +91,10 @@ export default {
             id: artistsId,
             name: artistsName,
           },
-          mvid: Data.mvid
-
+          mvid: Data.mvid,
+          dt: Data.duration
         }
-        console.log(songData);
+        // console.log("123", songData);
         store.commit('setCurrentPlay', songData);
       },
       Getheat: (heat) => {

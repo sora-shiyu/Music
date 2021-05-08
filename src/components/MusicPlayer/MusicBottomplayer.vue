@@ -2,11 +2,8 @@
   <div class="BottomPlayer">
     <!-- 歌曲封面 -->
     <div>
-      <img
-        class="Musicimg"
-        src="https://p2.music.126.net/cMcVx2eWWXO3zHTouRstKg==/109951163990747016.jpg"
-      />
-      <img class="overlay" src="@/assets/img/Player/Top.svg" />
+      <img class="Musicimg" :src="SongInfo.PicUrl" />
+      <img @click="showSongDetailed" class="overlay" src="@/assets/img/Player/Top.svg" />
       <!--  歌曲名以及别名 歌曲作者-->
       <div class="Musicinfo">
         <div class="alias">
@@ -20,7 +17,7 @@
         <img src="@/assets/img/Player/like.svg" alt />
       </div>
     </div>
-    <MusicPlayer :SongId="SongId" />
+    <MusicPlayer :SongInfo="SongInfo" />
     <div class="right">
       <div>标准</div>
 
@@ -43,9 +40,8 @@
 import MusicPlayer from '@/components/MusicPlayer/Player'
 import { useStore } from 'vuex';
 import { ref, watch, reactive } from 'vue';
-import {
-  GetSongUrlApi,
-} from '@/Api/api'
+import { GetSongDetailApi } from '@/Api/api.js'
+
 export default {
   name: 'MusicBottomplayer',
   components: {
@@ -62,16 +58,27 @@ export default {
 
       }
     })
-    let SongId = ref(0)
+    let SongInfo = ref({
+      id: 0,
+      vip: false,
+      PicUrl: ''
+    })
     //AddPlayList setAudioVolume
     watch(() => Store.state.currentPlay, (val) => {
-      SongId.value = val.id
+      GetSongDetailApi(val.id).then(res => {
+        SongInfo.value = {
+          id: val.id,
+          vip: res.privileges[0].cp == 0,
+          PicUrl: res.songs[0].al.picUrl
+        }
+        let currentPlay = Store.state.currentPlay;
+        currentPlay.PicUrl = SongInfo.value.PicUrl
+        Store.commit('setCurrentPlay', currentPlay)
+        //privileges[0].cp==0 大概率vip
+      })
+
       SongData.data = val
       Store.dispatch('AddPlayList', val)
-
-      // GetSongUrlApi(val.id).then(res => {
-      //   SongData = res.data[0]
-      // })
     })
     //
     let AudioVolume = ref(0)
@@ -84,13 +91,16 @@ export default {
       },
       showMusicList () {
         Store.commit('setShowPlayList', !Store.state.isShowPlayList)
+      },
+      showSongDetailed () {
+        Store.commit('setShowSongDetailed', !Store.state.isShowSongDetailed)
       }
 
     }
 
     return {
       SongData,
-      SongId,
+      SongInfo,
       ...method,
       AudioVolume
     }
@@ -113,6 +123,7 @@ export default {
   border-color: rgb(67, 67, 67);
   border-width: 1px;
   > div:first-child {
+    display: flex;
     width: 25%;
   }
   > div:first-child > *,
@@ -143,6 +154,7 @@ export default {
     }
   }
   .Musicinfo {
+    overflow: hidden;
     height: 48px;
     margin: 11px 0;
     line-height: 24px;

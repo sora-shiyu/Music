@@ -1,14 +1,19 @@
 <template>
   <HeadNav />
-  <div class="mian">
-    <div class="navlist">
-      <Navlist />
+
+  <div id="content" class="mian">
+    <div v-show="!Song">
+      <div class="navlist">
+        <Navlist />
+      </div>
+      <div class="content">
+        <router-view></router-view>
+      </div>
     </div>
-    <div id="content" class="content">
-      <PlayList />
-      <router-view></router-view>
-    </div>
+    <Song v-if="Song" />
+    <PlayList />
   </div>
+
   <Bottomplayer />
 </template>
 
@@ -17,17 +22,37 @@ import Bottomplayer from '@/components/MusicPlayer/MusicBottomplayer'
 import HeadNav from '@/components/HeadNav/HeadNav'
 import PlayList from '@/components/MusicPlayer/PlayList'
 import Navlist from '@/components/NavList/NavList'
+import Song from '@/views/Song/Song'
+import { ref, watch, nextTick } from 'vue'
+import { useStore } from 'vuex'
 export default {
   name: 'MusicApp',
   components: {
     Bottomplayer,
     HeadNav,
     Navlist,
-    PlayList
+    PlayList,
+    Song
   },
   setup () {
+    const store = useStore()
+    let Song = ref(false)
+    watch(() => store.state.isShowSongDetailed, (val) => {
+      Song.value = val
+    })
+    watch(() => store.state.currentPlay, (val) => {
+      if (Song.value) {
+        Song.value = !Song.value
+        nextTick(() => {
+          Song.value = !Song.value
 
+        })
+      }
+
+
+    })
     return {
+      Song,
     }
   },
 };
@@ -42,6 +67,10 @@ export default {
   left: 0;
   overflow: auto;
   background-color: rgb(43, 43, 43);
+  > div:first-child {
+    width: 100%;
+    height: 100%;
+  }
   .navlist {
     position: absolute;
     width: 200px;
