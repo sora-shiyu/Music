@@ -63,9 +63,11 @@ export const GetAlbumApi = id => request.get('/album?id=' + id)
 //获取歌词 /lyric?id=33894312
 export const GetLyricApi = id => request.get('/lyric?id=' + id)
 //获取单曲评论 /comment/music
-export const GetCommentMusicApi = (id, offset = 1, limit = 20, before = undefined) => {
+export const GetCommentMusicApi = (id, page = 1, limit = 20, before = undefined) => {
   let offset_ = ''
-  if (offset != 1) offset_ = '&offset=' + offset;
+  if (page != 1) {
+    offset_ = '&offset=' + (page - 1) * 20;
+  }
   let before_ = ''
   if (before) before_ = '&before=' + before;
   return request.get(`/comment/music?id=${id}&limit=${limit}${offset_}${before_}`)

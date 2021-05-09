@@ -24,7 +24,7 @@
       </div>
       <div class="include"></div>
     </div>
-    <div class="comment">
+    <div v-if="dataPage==1" class="comment">
       <div>全部评论({{total}})</div>
       <div class="commentList">
         <div v-for="HotData in hotCommentMusicData " :key="HotData.time">
@@ -84,11 +84,13 @@
     <div @click="toTop" v-if="showbackToTop" class="ToTop">
       <img src="@/assets/img/Song/ToTop.svg" />
     </div>
+    <pagination :page_size="20" :total="total" @pageChange="pageChange" />
   </div>
 </template>
 
 <script>
 import { useStore } from 'vuex'
+import pagination from '@/components/Pagination/pagination.vue'
 import {
   GetAlbumApi,
   GetLyricApi,
@@ -97,6 +99,9 @@ import {
 import { computed, nextTick, reactive, ref, toRefs, watch, watchEffect } from 'vue'
 export default {
   name: 'Song',
+  components: {
+    pagination
+  },
   setup () {
     const store = useStore()
     //获取当前播放歌曲信息
@@ -113,9 +118,10 @@ export default {
     let li = null
     GetLyricApi(currentPlayData.id).then(res => {
       //判断歌词状态
-      if (!res.nolyric) {
+      if (!res.nolyric && res.lrc) {
         //分割成数组
-        let lyricList = res.lrc.lyric.split('\n')
+        console.log(res);
+        let lyricList = res.lrc.lyric && res.lrc.lyric.split('\n') || []
         //将歌词数组转换成数据对象 数组下标为对象属性名
         lyricList.map((e, index) => {
           let data = e.split(']')
@@ -303,8 +309,6 @@ export default {
       toTop: () => {
         document.getElementsByClassName("Song")[0].scrollTop = 0
       }
-
-
     }
     //评论内容 
     let CommentData = reactive({
@@ -319,14 +323,24 @@ export default {
         total.value = res.total
         CommentData.hotCommentMusicData = methods.commentDataProcessing(res.hotComments)
         CommentData.commentMusicData = methods.commentDataProcessing(res.comments)
-
-
-
-
       }
     })
+    let dataPage = ref(1)
+    const pageChange = page => {
+      dataPage.value = page
+      if (page != 1) {
+        GetCommentMusicApi(currentPlayData.id, page).then(res => {
+          // console.log(res);
+          if (res.code == 200) {
+            // console.log(res.total);
+            // total.value = res.total
+            // CommentData.hotCommentMusicData = methods.commentDataProcessing(res.hotComments)
+            CommentData.commentMusicData = methods.commentDataProcessing(res.comments)
+          }
+        })
+      }
 
-
+    }
 
     return {
       currentPlayData,
@@ -336,7 +350,9 @@ export default {
       ...methods,
       ...toRefs(CommentData),
       total,
-      showbackToTop
+      showbackToTop,
+      pageChange,
+      dataPage
     }
   }
 }
@@ -535,6 +551,7 @@ export default {
     height: 20px;
   }
 }
+
 @-webkit-keyframes loadRotate {
   from {
     -webkit-transform: rotateZ(0deg);

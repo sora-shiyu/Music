@@ -2,7 +2,9 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    //搜索框的文本
     searchText: '',
+    //当前播放歌曲数据
     currentPlay: {
       id: 0,
       name: '',
@@ -16,14 +18,20 @@ export default createStore({
       },
       mvid: 0,
       dt: 0
-
     },
+    //播放列表数据 数据结构为当前播放歌曲的数组
     currentPlayList: [],
+    //播放状态
     playState: false,
+    //当前播放歌曲处于播放列表的位置
     index: -1,
+    //当前播放时间
     currentTime: 0,
+    //音量大小
     AudioVolume: 100,
+    //是否显示播放列表
     isShowPlayList: false,
+    //是否显示歌曲详情页 
     isShowSongDetailed: false
   },
   mutations: {
@@ -62,6 +70,7 @@ export default createStore({
     },
   },
   actions: {
+    //向播放列表添加单曲 
     AddPlayList ({ commit, state }, data) {
       let flag = false
       let index = 0
