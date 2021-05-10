@@ -13,6 +13,14 @@ export const GetPrivateContentApi = () => request.get('/personalized/privatecont
  * @returns 新歌速递
  */
 export const GetTopSongApi = type => request.get('/top/song?type=' + type)
+//新碟上架 /top/album
+/**
+ * area: ALL:全部,ZH:华语,EA:欧美,KR:韩国,JP:日本
+ * type : new:全部 hot:热门,默认为 new
+ */
+export const GetTopAlbumApi = (area = 'ALL', type = 'new') => {
+  return request.get('/top/album?area=' + area + '&type=' + type)
+}
 //推荐mv 
 export const GetPersonalizedMvApi = () => request.get('/personalized/mv')
 /**
@@ -71,8 +79,7 @@ export const GetCommentMusicApi = (id, page = 1, limit = 20, before = undefined)
   let before_ = ''
   if (before) before_ = '&before=' + before;
   return request.get(`/comment/music?id=${id}&limit=${limit}${offset_}${before_}`)
-
-
 }
-
+//所有榜单内容摘要 /toplist/detail
+export const GetTopListDetailApi = () => request.get('/toplist/detail')
 

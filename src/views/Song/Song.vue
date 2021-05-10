@@ -332,10 +332,9 @@ export default {
         GetCommentMusicApi(currentPlayData.id, page).then(res => {
           // console.log(res);
           if (res.code == 200) {
-            // console.log(res.total);
-            // total.value = res.total
-            // CommentData.hotCommentMusicData = methods.commentDataProcessing(res.hotComments)
             CommentData.commentMusicData = methods.commentDataProcessing(res.comments)
+            let SongDiv = document.getElementsByClassName("Song")[0]
+            SongDiv.scrollTop = SongDiv.clientHeight * 0.7
           }
         })
       }

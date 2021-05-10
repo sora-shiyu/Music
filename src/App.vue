@@ -25,6 +25,7 @@ import Navlist from '@/components/NavList/NavList'
 import Song from '@/views/Song/Song'
 import { ref, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 export default {
   name: 'MusicApp',
   components: {
@@ -36,6 +37,8 @@ export default {
   },
   setup () {
     const store = useStore()
+    const route = useRoute()
+
     let Song = ref(false)
     watch(() => store.state.isShowSongDetailed, (val) => {
       Song.value = val
@@ -48,9 +51,12 @@ export default {
 
         })
       }
-
-
     })
+    watch(() => route.path, () => {
+      Song.value = false
+      // store.commit('setShowPlayList', false)
+    })
+
     return {
       Song,
     }

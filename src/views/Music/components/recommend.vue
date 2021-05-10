@@ -1,8 +1,8 @@
 <template>
-  <div class="turn">
+  <div v-if="BannersData" class="turn">
     <el-carousel :interval="4000" type="card" height="200px">
       <el-carousel-item v-for="(Banners,index) in BannersData" :key="index">
-        <img class="BannersImage" :src="Banners.imageUrl" />
+        <img class="BannersImage" :src="Banners.imageUrl+ '?param=2000y1000'" />
         <div
           :style="{backgroundColor: Banners.titleColor=='red'?'rgb(204,74,74)':'rgb(74,121,204)'}"
           class="typeTitle"
