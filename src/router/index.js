@@ -88,12 +88,23 @@ const routes = [
         component: song,
         name: 'MusicSearchSong'
       },
+      {
+        path: 'singer',
+        name: 'MusicSearchSinger',
+        component: () => import('@/views/Search/components/singer.vue')
+
+      }
     ]
   },
   {
     path: '/musicList',
     name: 'MusicList',
     component: MusicList,
+  },
+  {
+    path: '/singer',
+    name: 'Singer',
+    component: () => import('@/views/Singer/Singer.vue'),
   },
   // {
   //   path: '/song',

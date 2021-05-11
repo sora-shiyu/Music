@@ -1,7 +1,7 @@
 <template>
-  <!-- {{SearchData.songCount}} -->
+  <!-- {{SearchData.songCountInfo}} -->
   <div class="total">
-    <span>找到首 {{songCount}} 单曲</span>
+    <span>找到{{songCountInfo}}</span>
   </div>
   <TopNav :ListData="ListData" />
   <div class="content">
@@ -46,14 +46,14 @@ export default {
         path: '/home/user'
       },
     ])
-    let songCount = ref(0)
+    let songCountInfo = ref("")
     const showMsg = (msg) => {
       console.log(msg);
-      songCount.value = msg
+      songCountInfo.value = msg
     }
     return {
       ListData,
-      songCount,
+      songCountInfo,
       showMsg
     }
   }

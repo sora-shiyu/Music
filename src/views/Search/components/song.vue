@@ -35,12 +35,8 @@ import {
 import { ref, watch, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from "vuex";
-import TopNav from '@/components/TopNav/TopNav'
 export default {
   name: 'song',
-  components: {
-    TopNav,
-  },
   setup (porps, context) {
 
     const route = useRoute()
@@ -50,14 +46,14 @@ export default {
     if (!searchText) searchText = '你是我的眼'
     GetCloudSearchApi(searchText, 1, 99).then(res => {
       SearchData.value = res.result
-      context.emit("getMessage", res.result.songCount);
+      context.emit("getMessage", res.result.songCount + '首单曲');
     })
     watch(() => store.state.searchText, (val, old) => {
 
       GetCloudSearchApi(val, 1, 99).then(res => {
         if (res.code == 200) {
           SearchData.value = res.result
-          context.emit("getMessage", res.result.songCount);
+          context.emit("getMessage", res.result.songCount + '首单曲');
         }
 
       })

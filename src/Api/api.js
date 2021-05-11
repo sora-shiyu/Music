@@ -82,4 +82,18 @@ export const GetCommentMusicApi = (id, page = 1, limit = 20, before = undefined)
 }
 //所有榜单内容摘要 /toplist/detail
 export const GetTopListDetailApi = () => request.get('/toplist/detail')
+//歌手分类列表 /artist/list?type=1&area=96&initial=b
+export const GetArtistListApi = (area = -1, type = -1, initial = -1) => request.get(`/artist/list?type=${type}&area=${area}&initial=${initial}`)
+
+//获取歌手详情
+export const GetArtistDetailApi = id => request.get('/artist/detail?id=' + id)
+//获取歌手专辑
+export const GetArtistAlbumApi = id => request.get('/artist/album?id=' + id)
+//获取歌手单曲 热门50首 /artists
+export const GetArtistsApi = id => request.get('/artists?id=' + id)
+//获取相似歌手 
+export const GetSimiArtistApi = id => request.get('/simi/artist?id=' + id)
+//获取歌手描述  
+export const GetArtistDescApi = id => request.get('/artist/desc?id=' + id)
+
 

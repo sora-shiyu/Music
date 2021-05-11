@@ -80,7 +80,7 @@
 
 <script>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from "vuex";
 import { debounce } from '@/Utils';
 import { GetSearchHotApi, GetSearchSuggestApi } from '@/Api/api.js'
@@ -90,6 +90,7 @@ export default {
     //GetSearchSuggestApi
     let searchValue = ref('')
     const router = useRouter()
+    const route = useRoute()
     const store = useStore();
     let isSuggestShow = ref(false);
     let HotDataList = ref([]);
@@ -105,12 +106,19 @@ export default {
         if (e.trim() == "") searchValue.value = '你是我的眼'
         isSuggestShow.value = false
         store.commit("setSearchText", e);
-        router.push({
-          name: 'MusicSearchSong',
-          params: {
-            value: e
-          }
-        })
+        //search
+        console.log(route);
+        if (route.path.indexOf("/search/") == -1) {
+          router.push({
+            name: 'MusicSearchSong',
+            params: {
+              value: e
+            }
+          })
+        }
+
+
+
       },
       previous: () => {
         router.go(-1)

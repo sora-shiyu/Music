@@ -124,6 +124,9 @@ export default {
     line-height: 34px;
     border-radius: 5px;
     margin: 2px 0;
+    > div {
+      display: inline-block;
+    }
     &:nth-child(odd) {
       background-color: rgb(46, 46, 46);
     }

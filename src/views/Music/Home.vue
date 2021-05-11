@@ -21,10 +21,12 @@ export default {
       }, {
         name: '歌单',
         path: '/home/songList'
-      }, {
-        name: '主播电台',
-        path: '/home/MusicStation'
-      }, {
+      },
+      // {
+      //   name: '主播电台',
+      //   path: '/home/MusicStation'
+      // },
+      {
         name: '排行榜',
         path: '/home/rank'
       }, {
