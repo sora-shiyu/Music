@@ -3,9 +3,14 @@
     <div class="title">官方榜</div>
     <!-- <div>{{TopListData.top5}}</div> -->
     <div class="TopRank" v-for="topData in TopListData.top5" :key="topData.id">
-      <img :src="topData.coverImgUrl+'?param=200y200'" />
+      <img @click="clickSongList(topData.id)" :src="topData.coverImgUrl+'?param=200y200'" />
       <div>
-        <div class="TopRankSongList" v-for="(song,index) in topData.songList" :key="song.id">
+        <div
+          class="TopRankSongList"
+          @dblclick="clickRankSong(song.id)"
+          v-for="(song,index) in topData.songList"
+          :key="song.id"
+        >
           <div>{{index+1}}</div>
           <div>-</div>
           <div>
@@ -18,7 +23,7 @@
     </div>
     <div class="title">全球榜</div>
     <div class="detailedList">
-      <div v-for="(Data,index) in TopListData.other" :key="index">
+      <div @click="clickSongList(Data.id)" v-for="(Data,index) in TopListData.other" :key="index">
         <div>
           <img class="ListPic" :src="Data.coverImgUrl+'?param=200y200'" />
           <div class="playCount">▷ {{Data.playCount}}</div>
@@ -39,6 +44,8 @@ import {
   GetTopListDetailApi,
   GetPlaylistDetailApi,
 } from '@/Api/api'
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 export default {
   name: 'rank',
@@ -85,9 +92,24 @@ export default {
 
     }
     GetData()
-
+    const store = useStore();
+    const Router = useRouter()
+    function clickRankSong (id) {
+      store.commit('setCurrentPlay', { id });
+    }
+    function clickSongList (id) {
+      Router.push({
+        name: 'MusicList',
+        params: {
+          value: id
+        }
+      })
+      // Router.push('/musicList', { value: id })
+    }
     return {
-      TopListData
+      TopListData,
+      clickRankSong,
+      clickSongList
     }
   }
 }
@@ -134,6 +156,9 @@ export default {
       > div:first-child {
         color: rgb(207, 57, 55);
       }
+    }
+    &:hover {
+      background-color: rgb(51, 51, 51);
     }
     > div:first-child {
       margin: 0 10px;

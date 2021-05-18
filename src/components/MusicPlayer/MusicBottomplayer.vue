@@ -10,7 +10,13 @@
           <span>{{SongData.data.name}}</span>
           <span>{{}}</span>
         </div>
-        <div>{{SongData.data.artists.name}}</div>
+
+        <div>
+          <div v-for=" (artist,index) in SongData.data.artists" :key="artist.id">
+            <div>{{artist.name}}</div>
+            <div v-if="(index+1)!=SongData.data.artists.length">\</div>
+          </div>
+        </div>
       </div>
       <!-- 爱心 -->
       <div class="like">
@@ -41,7 +47,7 @@ import MusicPlayer from '@/components/MusicPlayer/Player'
 import { useStore } from 'vuex';
 import { ref, watch, reactive } from 'vue';
 import { GetSongDetailApi } from '@/Api/api.js'
-
+import { songDataFormat } from '@/Utils'
 export default {
   name: 'MusicBottomplayer',
   components: {
@@ -65,20 +71,33 @@ export default {
     })
     //AddPlayList setAudioVolume
     watch(() => Store.state.currentPlay, (val) => {
+      console.log(val);
       GetSongDetailApi(val.id).then(res => {
         SongInfo.value = {
           id: val.id,
           vip: res.privileges[0].cp == 0,
           PicUrl: res.songs[0].al.picUrl
         }
+        let newSongData = songDataFormat(res.songs[0])
+        console.log(newSongData);
         let currentPlay = Store.state.currentPlay;
+
+        for (var key in newSongData) {
+          if (newSongData.hasOwnProperty(key) === true) {
+            //此处hasOwnProperty是判断自有属性，使用 for in 循环遍历对象的属性时，原型链上的所有属性都将被访问会避免原型对象扩展带来的干扰
+            currentPlay[key] = newSongData[key];
+          }
+        }
+
         currentPlay.PicUrl = SongInfo.value.PicUrl
         Store.commit('setCurrentPlay', currentPlay)
+        console.log(currentPlay);
         //privileges[0].cp==0 大概率vip
+        SongData.data = currentPlay
+        Store.dispatch('AddPlayList', currentPlay)
       })
 
-      SongData.data = val
-      Store.dispatch('AddPlayList', val)
+
     })
     //
     let AudioVolume = ref(0)

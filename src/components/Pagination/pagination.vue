@@ -6,6 +6,7 @@
       background
       layout="prev, pager, next"
       :total="total"
+      :current-page="current_page"
       :hide-on-single-page="isShow"
     ></el-pagination>
   </div>
@@ -18,6 +19,10 @@ export default {
   props: {
     page_size: Number,
     total: Number,
+    current_page: {
+      type: Number,
+      default: 1,
+    }
   },
 
   setup (props, { emit }) {

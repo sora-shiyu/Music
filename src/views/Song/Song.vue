@@ -14,7 +14,10 @@
       <div class="lyrics">
         <div>
           <div>{{currentPlayData.name}}</div>
-          <div>{{currentPlayData.artists.name}}-{{currentPlayData.album.name}}</div>
+          <div>
+            <span v-for="artist in  currentPlayData.artists" :key="artist.id">{{artist.name}}</span>
+            <span>-{{currentPlayData.album.name}}</span>
+          </div>
         </div>
         <div id="lyrics">
           <ul>

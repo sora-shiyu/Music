@@ -31,6 +31,7 @@ GetArtistListApi
 import {
   GetArtistListApi
 } from '@/Api/api'
+import { useRouter } from 'vue-router'
 export default {
   name: 'singer',
   setup () {
@@ -107,8 +108,14 @@ export default {
         }
       })
     })
+    const router = useRouter()
     const clickArtists = id => {
-      alert(id)
+      router.push({
+        name: 'MusicSingerAlbum',
+        params: {
+          singerId: id
+        }
+      })
     }
     return {
       state,

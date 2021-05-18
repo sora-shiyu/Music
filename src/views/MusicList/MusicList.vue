@@ -32,8 +32,11 @@
           <span class="lightGray">{{PlaylistData.playCount}}</span>
         </div>
         <div class="description">
-          <span>描述：</span>
-          <span>{{PlaylistData.description}}</span>
+          <div>描述：</div>
+          <div
+            :style="{whiteSpace:showDescription?'pre-line':'nowrap'}"
+          >{{PlaylistData.description}}</div>
+          <div @click="showDescription=!showDescription">{{showDescription?'▴':'▾'}}</div>
         </div>
       </div>
     </div>
@@ -70,6 +73,7 @@ import {
   GetPlaylistDetailApi,
   GetSongDetailApi,
 } from '@/Api/api'
+import { songDataFormat } from '@/Utils'
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { useStore } from 'vuex';
 export default {
@@ -82,6 +86,7 @@ export default {
     let PlaylistData = ref([])
     let Tag = ref('')
     let PlaylistDetailData = ref([])
+    let showDescription = ref(false)
     GetPlaylistDetailApi(id).then(res => {
       PlaylistData.value = res.playlist
       res.playlist.tags.map(tag => {
@@ -102,46 +107,46 @@ export default {
     onBeforeUnmount(() => {
       // alert("销毁")
     })
-    const SetSongData = Data => {
-      let artistsId = '';
-      let artistsName = '';
-      Data.ar.map(res => {
-        artistsId += res.id + '/'
-        artistsName += res.name + '/'
-      })
-      artistsId = artistsId.substring(0, artistsId.length - 1)
-      artistsName = artistsName.substring(0, artistsName.length - 1)
-      //
+    // const SetSongData = Data => {
+    //   let artistsId = '';
+    //   let artistsName = '';
+    //   Data.ar.map(res => {
+    //     artistsId += res.id + '/'
+    //     artistsName += res.name + '/'
+    //   })
+    //   artistsId = artistsId.substring(0, artistsId.length - 1)
+    //   artistsName = artistsName.substring(0, artistsName.length - 1)
+    //   //
 
-      let songData = {
-        id: Data.id,
-        name: Data.name,
-        album: {
-          id: Data.al.id,
-          name: Data.al.name
-        },
-        artists: {
-          id: artistsId,
-          name: artistsName,
-        },
-        mvid: Data.mv,
-        dt: Data.dt
+    //   let songData = {
+    //     id: Data.id,
+    //     name: Data.name,
+    //     album: {
+    //       id: Data.al.id,
+    //       name: Data.al.name
+    //     },
+    //     artists: {
+    //       id: artistsId,
+    //       name: artistsName,
+    //     },
+    //     mvid: Data.mv,
+    //     dt: Data.dt
 
-      }
-      return songData
-    }
+    //   }
+    //   return songData
+    // }
     const methods = {
       formatIndex: index => index < 10 ? '0' + index : index,
       GetId: Data => {
-        console.log("111", SetSongData(Data));
-        store.commit('setCurrentPlay', SetSongData(Data));
+        console.log("111", songDataFormat(Data));
+        store.commit('setCurrentPlay', songDataFormat(Data));
       },
       Getheat: heat => Math.floor(heat * 100 / 330000),
       PlayAll () {
         if (PlaylistDetailData.value.length != 0) {
           let SongDatas = [];
           PlaylistDetailData.value.forEach(e => {
-            SongDatas.push(SetSongData(e))
+            SongDatas.push(songDataFormat(e))
           })
           store.commit('setCurrentPlayList', SongDatas);
           store.commit('setCurrentPlay', SongDatas[0]);
@@ -161,6 +166,7 @@ export default {
     return {
       PlaylistData,
       Tag,
+      showDescription,
       PlaylistDetailData,
       ...methods
     }
@@ -262,18 +268,21 @@ export default {
       }
       .description {
         font-size: 14px;
-        .lightWhite();
-        > span:first-child {
-          float: left;
+        display: flex;
+        .lightGray();
+        > div:first-child {
+          white-space: nowrap;
+          .lightWhite();
         }
-        > span:last-child {
-          .lightGray();
+        > div:nth-child(2) {
+          flex: 1;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
           display: block;
           &:hover {
-            white-space: normal;
+            // white-space: normal;
+            white-space: pre-line;
           }
         }
       }

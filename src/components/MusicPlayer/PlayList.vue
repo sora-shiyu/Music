@@ -13,7 +13,13 @@
         :key="index"
       >
         <div :title="data.name">{{data.name}}</div>
-        <div :title="data.artists.name">{{data.artists.name}}</div>
+        <div>
+          <div v-for="(artist,index) in  data.artists" :key="artist.id">
+            <div>{{artist.name}}</div>
+            <div v-if="(index+1)!=data.artists.length">\</div>
+          </div>
+        </div>
+
         <img :title="data.album.name" src="@/assets/img/Player/source.svg" />
         <div>{{getDuration(data.dt)}}</div>
         <span @click="SongRemove(index)">×</span>
@@ -159,6 +165,11 @@ export default {
       line-height: 25px;
       font-size: 14px;
       color: rgb(144, 144, 144);
+      div {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
     > span {
       position: absolute;

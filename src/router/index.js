@@ -36,14 +36,11 @@ const routes = [
       {
         path: 'recommend',
         component: recommend
+
       },
       {
         path: 'songList',
-        component: songList
-      },
-      {
-        path: 'MusicStation',
-        component: MusicStation
+        component: songList,
       },
       {
         path: 'rank',
@@ -103,8 +100,34 @@ const routes = [
   },
   {
     path: '/singer',
-    name: 'Singer',
+    name: 'MusicSinger',
     component: () => import('@/views/Singer/Singer.vue'),
+    children: [
+      {
+        path: '',
+        redirect: '/singer/album'
+      },
+      {
+        path: 'album',
+        component: () => import('@/views/Singer/components/album.vue'),
+        name: 'MusicSingerAlbum'
+      },
+      {
+        path: 'mv',
+        component: () => import('@/views/Singer/components/mv.vue'),
+        name: 'MusicSingerMv'
+      },
+      {
+        path: 'detail',
+        component: () => import('@/views/Singer/components/detail.vue'),
+        name: 'MusicSingerDetail'
+      },
+      {
+        path: 'simi',
+        component: () => import('@/views/Singer/components/simi.vue'),
+        name: 'MusicSingerSimi'
+      },
+    ]
   },
   // {
   //   path: '/song',

@@ -28,7 +28,7 @@
       :key="index"
     >
       <div>
-        <img class="ListPic" :src="Data.coverImgUrl" />
+        <img class="ListPic" :src="Data.coverImgUrl+'?param=300y300'" />
         <div class="playCount">▷ {{playCountToW(Data.playCount)}}</div>
         <div class="playButton">
           <span>▶</span>
@@ -38,6 +38,12 @@
       <span>{{Data.name}}</span>
     </div>
   </div>
+  <pagination
+    :page_size="50"
+    :total="PlaylistTotal"
+    :current_page="current_page"
+    @pageChange="pageChange"
+  />
 </template>
 
 <script>
@@ -47,9 +53,13 @@ import {
   GetPlaylistApi
 } from '@/Api/api'
 import { reactive, ref, compute, onBeforeUnmount, computed } from 'vue'
+import pagination from '@/components/Pagination/pagination.vue'
 import { useRouter } from 'vue-router'
 export default {
   name: 'MusicSonglist',
+  components: {
+    pagination
+  },
   setup () {
     //GetHighQualityApi
     const Router = useRouter()
@@ -64,12 +74,19 @@ export default {
 
     })
     let PlaylistData = ref([])
+    let PlaylistTotal = ref(0)
     GetPlaylistApi().then(res => {
-      PlaylistData.value = res.playlists
-    })
+      if (res.code == 200) {
+        PlaylistData.value = res.playlists
 
+        PlaylistTotal.value = res.total
+      }
+
+    })
+    let current_page = ref(1)
     const clickTag = (e) => {
       mode.value = e
+      current_page.value = 1
       GetHighQualityApi(e).then(res => {
         HighQualityData.value = res.playlists
       })
@@ -109,6 +126,16 @@ export default {
           }
         })
         // Router.push('/musicList', { value: id })
+      },
+      pageChange (page) {
+        current_page.value = page
+        GetPlaylistApi(mode.value, (page - 1) * 50).then(res => {
+          if (res.code == 200) {
+            PlaylistData.value = res.playlists
+            PlaylistTotal.value = res.total
+          }
+
+        })
       }
 
 
@@ -122,7 +149,9 @@ export default {
       clickTag,
       ...computeds,
       PlaylistData,
-      ...methods
+      ...methods,
+      PlaylistTotal,
+      current_page
 
     }
   }

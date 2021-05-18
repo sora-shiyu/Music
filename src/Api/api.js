@@ -54,8 +54,8 @@ export const GetHighQualityApi = (cat = '全部', before = undefined, limit = 20
 //热门歌单分类 
 export const GetPlaylistHotApi = () => request.get('/playlist/hot')
 //歌单 ( 网友精选碟 ) 
-export const GetPlaylistApi = (cat = '全部', order = 'hot', limit = 50) => {
-  return request.get(`/top/playlist?limit=${limit}&cat=${cat}&order=${order}`)
+export const GetPlaylistApi = (cat = '全部', offset = 0, order = 'hot', limit = 50) => {
+  return request.get(`/top/playlist?limit=${limit}&cat=${cat}&order=${order}&offset=${offset}`)
 }
 //获取歌单详情 
 export const GetPlaylistDetailApi = id => request.get('/playlist/detail?id=' + id)
@@ -89,7 +89,7 @@ export const GetArtistListApi = (area = -1, type = -1, initial = -1) => request.
 export const GetArtistDetailApi = id => request.get('/artist/detail?id=' + id)
 //获取歌手专辑
 export const GetArtistAlbumApi = id => request.get('/artist/album?id=' + id)
-//获取歌手单曲 热门50首 /artists
+//获取歌手单曲 热门50首
 export const GetArtistsApi = id => request.get('/artists?id=' + id)
 //获取相似歌手 
 export const GetSimiArtistApi = id => request.get('/simi/artist?id=' + id)

@@ -35,6 +35,7 @@ import {
 import { ref, watch, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from "vuex";
+import { songDataFormat } from '@/Utils'
 export default {
   name: 'song',
   setup (porps, context) {
@@ -66,32 +67,33 @@ export default {
         return index < 10 ? '0' + index : index
       },
       GetId: Data => {
-        let artistsId = '';
-        let artistsName = '';
-        Data.artists.map(res => {
-          artistsId += res.id + '/'
-          artistsName += res.name + '/'
-        })
 
-        artistsId = artistsId.substring(0, artistsId.length - 1)
-        artistsName = artistsName.substring(0, artistsName.length - 1)
-        //
-        let songData = {
-          id: Data.id,
-          name: Data.name,
-          album: {
-            id: Data.album.id,
-            name: Data.album.name
-          },
-          artists: {
-            id: artistsId,
-            name: artistsName,
-          },
-          mvid: Data.mvid,
-          dt: Data.duration
-        }
+        // let artistsId = '';
+        // let artistsName = '';
+        // Data.artists.map(res => {
+        //   artistsId += res.id + '/'
+        //   artistsName += res.name + '/'
+        // })
+
+        // artistsId = artistsId.substring(0, artistsId.length - 1)
+        // artistsName = artistsName.substring(0, artistsName.length - 1)
+        // //
+        // let songData = {
+        //   id: Data.id,
+        //   name: Data.name,
+        //   album: {
+        //     id: Data.album.id,
+        //     name: Data.album.name
+        //   },
+        //   artists: {
+        //     id: artistsId,
+        //     name: artistsName,
+        //   },
+        //   mvid: Data.mvid,
+        //   dt: Data.duration
+        // }
         // console.log("123", songData);
-        store.commit('setCurrentPlay', songData);
+        store.commit('setCurrentPlay', songDataFormat(Data));
       },
       Getheat: (heat) => {
         return Math.floor(heat * 100 / 330000)

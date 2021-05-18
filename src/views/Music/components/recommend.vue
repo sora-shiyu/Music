@@ -11,7 +11,7 @@
     </el-carousel>
   </div>
   <div class="recommendedSong">
-    <div class="title2">
+    <div @click="pageJump('/home/songList')" class="title2">
       <span>推荐歌单</span>
       <img src="@/assets/img/Player/Top.svg" />
     </div>
@@ -59,7 +59,7 @@
     </div>
   </div>
   <div class="newSong">
-    <div class="title2">
+    <div @click="pageJump('/home/new')" class="title2">
       <span>最新音乐</span>
       <img src="@/assets/img/Player/Top.svg" />
     </div>
@@ -74,7 +74,7 @@
           class="newSongListPic"
           src="http://p4.music.126.net/rKjgA6ietsSS-hIpl_RdUA==/109951165933857216.jpg"
         />-->
-        <div class="newSongInfo">
+        <div @dblclick="clickPlay(index)" class="newSongInfo">
           <div>
             {{Data.name}}
             <span v-if="Data.alias">({{Data.alias}})</span>
@@ -82,10 +82,10 @@
           <div>
             <span v-if="Data.sq">S Q</span>
             <span v-if="Data.mv">MV▸</span>
-            {{Data.ar_name}}
+            <span @click="clickSingerName(Data.ar_id)">{{Data.ar_name}}</span>
           </div>
         </div>
-        <div>
+        <div @click="clickPlay(index)">
           <span>▶</span>
         </div>
       </div>
@@ -122,8 +122,10 @@ import {
   GetTopSongApi,
   GetPersonalizedMvApi,
 } from '@/Api/api'
+import { songDataFormat } from '@/Utils'
 import { reactive, ref, computed, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 export default {
   name: 'MusicRecommend',
   setup () {
@@ -173,7 +175,6 @@ export default {
         }
       }),
       GetTopSongData: computed(() => {
-        // console.log(TopSongData);
         let data = []
         TopSongData.value.slice(0, 12).forEach(e => {
           let songData = {};
@@ -183,14 +184,15 @@ export default {
           songData.mv = e.mvid != 0
           songData.mvid = e.mvid
           songData.ar_name = e.artists[0].name
+          songData.ar_id = e.artists[0].id
           songData.alias = e.alias[0]
           data.push(songData)
         })
         return data
       })
     }
-
     const Router = useRouter()
+    const Store = useStore()
     const methods = {
       playCountToW: (playCount) => {
         return playCount < 10000 ? playCount : Math.floor(playCount / 10000) + '万'
@@ -202,10 +204,25 @@ export default {
             value: id
           }
         })
-        // Router.push('/musicList', { value: id })
-      }
-
-
+      },
+      clickSingerName (id) {
+        Router.push({
+          name: 'MusicSingerAlbum',
+          params: {
+            singerId: id
+          }
+        })
+      },
+      pageJump: (name) => {
+        Router.push(name)
+      },
+      clickPlay: index => {
+        console.log(index);
+        if (TopSongData.value[index]) {
+          Store.commit('setCurrentPlay', songDataFormat(TopSongData.value[index]));
+        }
+        // 
+      },
 
     }
 
@@ -378,7 +395,12 @@ export default {
       }
       > div:last-child {
         color: #999898;
-        > span {
+        > :last-child {
+          &:hover {
+            color: rgb(138, 144, 132);
+          }
+        }
+        > span:not(:last-child) {
           color: rgb(236, 65, 65);
           border-style: ridge;
           border-width: 1px;

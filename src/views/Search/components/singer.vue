@@ -1,7 +1,9 @@
 <template>
   <div class="singer">
     <div class="singerInfo" v-for="artistsData in SearchData " :key="artistsData.id">
-      <img :src="artistsData.picUrl+'?param=60y60'" />
+      <img
+        :src="artistsData.picUrl||'https://p2.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'+'?param=60y60'"
+      />
       <div class="singerName">
         <span>{{artistsData.name}}</span>
         <span v-if="artistsData.alias[0]">({{artistsData.alia[0]}})</span>
